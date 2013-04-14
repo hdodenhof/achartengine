@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2009 - 2012 SC 4ViewSoft SRL
+ * Copyright (C) 2013 - Henning Dodenhof
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +24,7 @@ import org.achartengine.model.SeriesSelection;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.tools.FitZoom;
+import org.achartengine.tools.MoveListener;
 import org.achartengine.tools.PanListener;
 import org.achartengine.tools.Zoom;
 import org.achartengine.tools.ZoomListener;
@@ -35,7 +37,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.os.Build;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
@@ -115,17 +116,8 @@ public class GraphicalView extends View {
       mZoomOut = new Zoom(mChart, false, mRenderer.getZoomRate());
       mFitZoom = new FitZoom(mChart);
     }
-    int version = 7;
-    try {
-      version = Integer.valueOf(Build.VERSION.SDK);
-    } catch (Exception e) {
-      // do nothing
-    }
-    if (version < 7) {
-      mTouchHandler = new TouchHandlerOld(this, mChart);
-    } else {
-      mTouchHandler = new TouchHandler(this, mChart);
-    }
+
+    mTouchHandler = new TouchHandler(this, mChart);
   }
 
   /**
@@ -211,8 +203,6 @@ public class GraphicalView extends View {
       repaint();
     }
   }
-  
-
 
   /**
    * Do a chart zoom reset / fit zoom.
@@ -271,6 +261,24 @@ public class GraphicalView extends View {
    */
   public void removePanListener(PanListener listener) {
     mTouchHandler.removePanListener(listener);
+  }
+
+  /**
+   * Adds a new move listener.
+   * 
+   * @param listener move listener
+   */
+  public void addMoveListener(MoveListener listener) {
+    mTouchHandler.addMoveListener(listener);
+  }
+
+  /**
+   * Removes a move listener.
+   * 
+   * @param listener move listener
+   */
+  public void removeMoveListener(MoveListener listener) {
+    mTouchHandler.removeMoveListener(listener);
   }
 
   protected RectF getZoomRectangle() {

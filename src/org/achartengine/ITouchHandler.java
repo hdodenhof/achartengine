@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2009 - 2012 SC 4ViewSoft SRL
+ * Copyright (C) 2013 Henning Dodenhof
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +16,7 @@
  */
 package org.achartengine;
 
+import org.achartengine.tools.MoveListener;
 import org.achartengine.tools.PanListener;
 import org.achartengine.tools.ZoomListener;
 
@@ -60,4 +62,17 @@ public interface ITouchHandler {
    */
   void removePanListener(PanListener listener);
 
+  /**
+   * Adds a new move listener.
+   * 
+   * @param listener move listener
+   */
+  void addMoveListener(MoveListener listener);
+
+  /**
+   * Removes a move listener.
+   * 
+   * @param listener move listener
+   */
+  void removeMoveListener(MoveListener listener);
 }

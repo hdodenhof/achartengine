@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2009 - 2012 SC 4ViewSoft SRL
+ * Copyright (C) 2013 Henning Dodenhof
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +36,7 @@ public class CombinedXYChart extends XYChart {
   /** The supported charts for being combined. */
   private Class<?>[] xyChartTypes = new Class<?>[] { TimeChart.class, LineChart.class,
       CubicLineChart.class, BarChart.class, BubbleChart.class, ScatterChart.class,
-      RangeBarChart.class, RangeStackedBarChart.class };
+      RangeBarChart.class, RangeStackedBarChart.class, OverlayChart.class };
 
   /**
    * Builds a new combined XY chart instance.
@@ -173,6 +174,15 @@ public class CombinedXYChart extends XYChart {
    */
   public String getChartType() {
     return "Combined";
+  }
+
+  /**
+   * Returns all XY charts
+   * 
+   * @return an array of charts
+   */
+  public XYChart[] getCharts() {
+    return mCharts;
   }
 
 }

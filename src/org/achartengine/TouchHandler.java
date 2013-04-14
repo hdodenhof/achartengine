@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2009 - 2012 SC 4ViewSoft SRL
+ * Copyright (C) 2013 Henning Dodenhof
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +17,13 @@
 package org.achartengine;
 
 import org.achartengine.chart.AbstractChart;
+import org.achartengine.chart.CombinedXYChart;
+import org.achartengine.chart.OverlayChart;
 import org.achartengine.chart.RoundChart;
 import org.achartengine.chart.XYChart;
 import org.achartengine.renderer.DefaultRenderer;
+import org.achartengine.tools.Move;
+import org.achartengine.tools.MoveListener;
 import org.achartengine.tools.Pan;
 import org.achartengine.tools.PanListener;
 import org.achartengine.tools.Zoom;
@@ -50,6 +55,8 @@ public class TouchHandler implements ITouchHandler {
   /** The graphical view. */
   private GraphicalView graphicalView;
 
+  private Move mMove;
+
   /**
    * Creates a new graphical view.
    * 
@@ -70,6 +77,17 @@ public class TouchHandler implements ITouchHandler {
     if (mRenderer.isZoomEnabled()) {
       mPinchZoom = new Zoom(chart, true, 1);
     }
+    // TODO Better way to do this without messing with the DefaultRenderer?
+    if (chart instanceof CombinedXYChart) {
+      CombinedXYChart combinedXYChart = (CombinedXYChart) chart;
+
+      for (int i = 0; i < combinedXYChart.getCharts().length; i++) {
+        if (combinedXYChart.getCharts()[i] instanceof OverlayChart) {
+          mMove = new Move(chart, i);
+          break;
+        }
+      }
+    }
   }
 
   /**
@@ -78,6 +96,12 @@ public class TouchHandler implements ITouchHandler {
    * @param event the touch event
    */
   public boolean handleTouch(MotionEvent event) {
+    if (mMove != null) {
+      // Just fetching all touch events if a move tool exists isn't exactly
+      // great but serves its purpose (as zooming and panning is not allowed
+      // in an overview chart)
+      return handleMoveEvent(event);
+    }
     int action = event.getAction();
     if (mRenderer != null && action == MotionEvent.ACTION_MOVE) {
       if (oldX >= 0 || oldY >= 0) {
@@ -151,6 +175,30 @@ public class TouchHandler implements ITouchHandler {
     return !mRenderer.isClickEnabled();
   }
 
+  private boolean handleMoveEvent(MotionEvent event) {
+    int action = event.getAction();
+    if (action == MotionEvent.ACTION_MOVE) {
+      if (oldX >= 0 || oldY >= 0) {
+        float newX = event.getX(0);
+        float newY = event.getY(0);
+
+        mMove.apply(oldX, oldY, newX, newY);
+      }
+    } else if (action == MotionEvent.ACTION_DOWN) {
+      oldX = event.getX(0);
+      oldY = event.getY(0);
+    } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_POINTER_UP) {
+      mMove.reset();
+      oldX = 0;
+      oldY = 0;
+      if (action == MotionEvent.ACTION_POINTER_UP) {
+        oldX = -1;
+        oldY = -1;
+      }
+    }
+    return true;
+  }
+
   private void applyZoom(float zoomRate, int axis) {
     zoomRate = Math.max(zoomRate, 0.9f);
     zoomRate = Math.min(zoomRate, 1.1f);
@@ -201,6 +249,29 @@ public class TouchHandler implements ITouchHandler {
   public void removePanListener(PanListener listener) {
     if (mPan != null) {
       mPan.removePanListener(listener);
+    }
+  }
+
+  /**
+   * Adds a new move listener.
+   * 
+   * @param listener pan listener
+   */
+  public void addMoveListener(MoveListener listener) {
+    if (mMove != null) {
+      mMove.addMoveListener(listener);
+    }
+  }
+
+  /**
+   * Removes a move listener.
+   * 
+   * @param listener move listener
+   */
+  @Override
+  public void removeMoveListener(MoveListener listener) {
+    if (mMove != null) {
+      mMove.removeMoveListener(listener);
     }
   }
 }
