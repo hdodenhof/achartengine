@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2009 - 2012 SC 4ViewSoft SRL
+ * Copyright (C) 2013 Henning Dodenhof
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +19,7 @@ package org.achartengine;
 import org.achartengine.chart.BarChart;
 import org.achartengine.chart.BarChart.Type;
 import org.achartengine.chart.BubbleChart;
+import org.achartengine.chart.CombinedTimeChart;
 import org.achartengine.chart.CombinedXYChart;
 import org.achartengine.chart.CubicLineChart;
 import org.achartengine.chart.DialChart;
@@ -208,6 +210,32 @@ public class ChartFactory {
   }
 
   /**
+   * Creates a combined time chart view.
+   * 
+   * @param context the context
+   * @param dataset the multiple series dataset (cannot be null)
+   * @param renderer the multiple series renderer (cannot be null)
+   * @param types the chart types (cannot be null)
+   * @return a combined time chart graphical view
+   * @throws IllegalArgumentException if dataset is null or renderer is null or
+   *           if a dataset number of items is different than the number of
+   *           series renderers or number of chart types
+   */
+  public static final GraphicalView getCombinedTimeChartView(Context context,
+      XYMultipleSeriesDataset dataset, XYMultipleSeriesRenderer renderer, String[] types,
+      String format) {
+    if (dataset == null || renderer == null || types == null
+        || dataset.getSeriesCount() != types.length) {
+      throw new IllegalArgumentException(
+          "Dataset, renderer and types should be not null and the datasets series count should be equal to the types length");
+    }
+    checkParameters(dataset, renderer);
+    CombinedTimeChart chart = new CombinedTimeChart(dataset, renderer, types);
+    chart.setDateFormat(format);
+    return new GraphicalView(context, chart);
+  }
+
+  /**
    * Creates a pie chart view that can be used to start the graphical view
    * activity.
    * 
@@ -246,8 +274,8 @@ public class ChartFactory {
   }
 
   /**
-   * Creates a doughnut chart view that can be used to start the graphical
-   * view activity.
+   * Creates a doughnut chart view that can be used to start the graphical view
+   * activity.
    * 
    * @param context the context
    * @param dataset the multiple category series dataset (cannot be null)

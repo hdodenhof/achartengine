@@ -47,16 +47,19 @@ public class ConnectedCharts {
   private XYMultipleSeriesDataset mBaseDataset;
   private XYMultipleSeriesDataset mOverviewDataset;
 
+  private String mFormat;
   private String[] mTypes;
   private int mOverlayIndex;
 
   public ConnectedCharts(Context context, XYMultipleSeriesDataset dataset,
-      XYMultipleSeriesRenderer renderer, String[] types) {
+      XYMultipleSeriesRenderer renderer, String[] types, String format) {
     mContext = context;
 
-    mBaseChartView = ChartFactory.getCombinedXYChartView(context, dataset, renderer, types);
+    mBaseChartView = ChartFactory.getCombinedTimeChartView(context, dataset, renderer, types,
+        format);
     mBaseDataset = dataset;
     mBaseChartRenderer = renderer;
+    mFormat = format;
     mTypes = types;
 
     mBaseChartRenderer.setPanEnabled(true, false);
@@ -148,8 +151,8 @@ public class ConnectedCharts {
     mOverviewChartRenderer.setZoomButtonsVisible(false);
 
     // create overview chart and view
-    mOverviewChartView = ChartFactory.getCombinedXYChartView(mContext, mOverviewDataset,
-        mOverviewChartRenderer, overlayTypes);
+    mOverviewChartView = ChartFactory.getCombinedTimeChartView(mContext, mOverviewDataset,
+        mOverviewChartRenderer, overlayTypes, mFormat);
 
     // TODO better way to inject context?
     ((OverlayChart) ((CombinedXYChart) mOverviewChartView.getChart()).getCharts()[mOverlayIndex])
