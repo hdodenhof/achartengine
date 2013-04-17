@@ -345,4 +345,13 @@ public class GraphicalView extends View {
     return getDrawingCache(true);
   }
 
+  /**
+   * Returns the chart that belongs to this view
+   * 
+   * @return the chart
+   */
+  public AbstractChart getChart() {
+    return mChart;
+  }
+
 }

@@ -17,13 +17,16 @@ package org.achartengine.chart;
 
 import java.util.List;
 
+import org.achartengine.R;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.drawable.NinePatchDrawable;
 
 /**
  * The overlay chart rendering class.
@@ -31,6 +34,8 @@ import android.graphics.Paint.Style;
 public class OverlayChart extends XYChart {
   /** The constant to identify this chart type. */
   public static final String TYPE = "Overlay";
+
+  private Context mContext;
 
   OverlayChart() {
   }
@@ -60,11 +65,30 @@ public class OverlayChart extends XYChart {
   public void drawSeries(Canvas canvas, Paint paint, List<Float> points,
       SimpleSeriesRenderer seriesRenderer, float yAxisValue, int seriesIndex, int startIndex) {
 
+    if (mContext == null) {
+      throw new RuntimeException(); // TODO
+    }
+
     paint.setColor(seriesRenderer.getColor());
     paint.setStyle(Style.FILL);
 
     canvas.drawRect(0, 0, points.get(0), canvas.getHeight(), paint);
     canvas.drawRect(points.get(2), 0, canvas.getWidth(), canvas.getHeight(), paint);
+
+    NinePatchDrawable leftHandle = (NinePatchDrawable) mContext.getResources().getDrawable(
+        R.drawable.handle);
+
+    NinePatchDrawable rightHandle = (NinePatchDrawable) mContext.getResources().getDrawable(
+        R.drawable.handle);
+
+    // TODO proper calculation of bounds (dps)
+    leftHandle.setBounds(Math.round(points.get(0)) - 15, getScreenR().top,
+        Math.round(points.get(0)) + 15, getScreenR().bottom);
+    leftHandle.draw(canvas);
+
+    rightHandle.setBounds(Math.round(points.get(2)) - 15, getScreenR().top,
+        Math.round(points.get(2)) + 15, getScreenR().bottom);
+    rightHandle.draw(canvas);
   }
 
   @Override
@@ -113,4 +137,9 @@ public class OverlayChart extends XYChart {
   public void drawLegendShape(Canvas canvas, SimpleSeriesRenderer renderer, float x, float y,
       int seriesIndex, Paint paint) {
   }
+
+  public void setContext(Context context) {
+    this.mContext = context;
+  }
+
 }

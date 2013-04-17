@@ -15,6 +15,8 @@
  */
 package org.achartengine;
 
+import org.achartengine.chart.CombinedXYChart;
+import org.achartengine.chart.OverlayChart;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
@@ -148,6 +150,10 @@ public class ConnectedCharts {
     // create overview chart and view
     mOverviewChartView = ChartFactory.getCombinedXYChartView(mContext, mOverviewDataset,
         mOverviewChartRenderer, overlayTypes);
+
+    // TODO better way to inject context?
+    ((OverlayChart) ((CombinedXYChart) mOverviewChartView.getChart()).getCharts()[mOverlayIndex])
+        .setContext(mContext);
   }
 
   private void initListeners() {
