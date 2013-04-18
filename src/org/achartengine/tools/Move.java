@@ -22,16 +22,20 @@ import org.achartengine.chart.AbstractChart;
 import org.achartengine.chart.CombinedXYChart;
 import org.achartengine.model.XYSeries;
 
+import android.content.Context;
+import android.util.DisplayMetrics;
+
 /**
  * The move tool.
  */
 public class Move extends AbstractTool {
 
-  private static final int DRAG_BUFFER = 35; // TODO
-  private static final int DRAG_MIN_DISTANCE = 25; // TODO
+  private final int mDragBuffer;
+  private final int mDragMinDistance;
 
   private List<MoveListener> mMoveListeners = new ArrayList<MoveListener>();
 
+  private Context mContext;
   private int mOverlaySeriesIndex;
 
   private boolean mDraggingLeft = false;
@@ -43,9 +47,13 @@ public class Move extends AbstractTool {
    * 
    * @param chart the XY chart
    */
-  public Move(AbstractChart chart, int overlaySeriesIndex) {
+  public Move(Context context, AbstractChart chart, int overlaySeriesIndex) {
     super(chart);
+    mContext = context;
     mOverlaySeriesIndex = overlaySeriesIndex;
+
+    mDragBuffer = dpToPx(16);
+    mDragMinDistance = dpToPx(12);
   }
 
   /**
@@ -82,17 +90,17 @@ public class Move extends AbstractTool {
 
     double newRealX = chart.toRealPoint(newX, 0)[0];
 
-    if ((mDraggingLeft || Math.abs(oldX - oldX1) < DRAG_BUFFER) && !mMoving) {
+    if ((mDraggingLeft || Math.abs(oldX - oldX1) < mDragBuffer) && !mMoving) {
       mDraggingLeft = true;
 
-      if (newX < oldX2 - DRAG_MIN_DISTANCE && newX >= limitX1) {
+      if (newX < oldX2 - mDragMinDistance && newX >= limitX1) {
         newRealX1 = newRealX;
         newRealX2 = oldRealX2;
       }
-    } else if ((mDraggingRight || Math.abs(oldX - oldX2) < DRAG_BUFFER) && !mMoving) {
+    } else if ((mDraggingRight || Math.abs(oldX - oldX2) < mDragBuffer) && !mMoving) {
       mDraggingRight = true;
 
-      if (newX > oldX1 + DRAG_MIN_DISTANCE && newX <= limitX2) {
+      if (newX > oldX1 + mDragMinDistance && newX <= limitX2) {
         newRealX1 = oldRealX1;
         newRealX2 = newRealX;
       }
@@ -157,5 +165,10 @@ public class Move extends AbstractTool {
    */
   public synchronized void removeMoveListener(MoveListener listener) {
     mMoveListeners.remove(listener);
+  }
+
+  private int dpToPx(int dp) {
+    DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
+    return (int) ((dp * displayMetrics.density) + 0.5);
   }
 }

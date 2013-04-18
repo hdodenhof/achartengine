@@ -29,6 +29,7 @@ import org.achartengine.tools.PanListener;
 import org.achartengine.tools.Zoom;
 import org.achartengine.tools.ZoomListener;
 
+import android.content.Context;
 import android.graphics.RectF;
 import android.view.MotionEvent;
 
@@ -56,6 +57,7 @@ public class TouchHandler implements ITouchHandler {
   private GraphicalView graphicalView;
 
   private Move mMove;
+  private Context mContext;
 
   /**
    * Creates a new graphical view.
@@ -63,7 +65,7 @@ public class TouchHandler implements ITouchHandler {
    * @param view the graphical view
    * @param chart the chart to be drawn
    */
-  public TouchHandler(GraphicalView view, AbstractChart chart) {
+  public TouchHandler(GraphicalView view, Context context, AbstractChart chart) {
     graphicalView = view;
     zoomR = graphicalView.getZoomRectangle();
     if (chart instanceof XYChart) {
@@ -83,7 +85,7 @@ public class TouchHandler implements ITouchHandler {
 
       for (int i = 0; i < combinedXYChart.getCharts().length; i++) {
         if (combinedXYChart.getCharts()[i] instanceof OverlayChart) {
-          mMove = new Move(chart, i);
+          mMove = new Move(context, chart, i);
           break;
         }
       }

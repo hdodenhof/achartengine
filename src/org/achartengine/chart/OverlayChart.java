@@ -27,6 +27,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.drawable.NinePatchDrawable;
+import android.util.DisplayMetrics;
 
 /**
  * The overlay chart rendering class.
@@ -81,13 +82,15 @@ public class OverlayChart extends XYChart {
     NinePatchDrawable rightHandle = (NinePatchDrawable) mContext.getResources().getDrawable(
         R.drawable.handle);
 
-    // TODO proper calculation of bounds (dps)
-    leftHandle.setBounds(Math.round(points.get(0)) - 15, getScreenR().top,
-        Math.round(points.get(0)) + 15, getScreenR().bottom);
+    DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
+    int halfWidth = (int) ((8 * displayMetrics.density) + 0.5);
+
+    leftHandle.setBounds(Math.round(points.get(0)) - halfWidth, getScreenR().top,
+        Math.round(points.get(0)) + halfWidth, getScreenR().bottom);
     leftHandle.draw(canvas);
 
-    rightHandle.setBounds(Math.round(points.get(2)) - 15, getScreenR().top,
-        Math.round(points.get(2)) + 15, getScreenR().bottom);
+    rightHandle.setBounds(Math.round(points.get(2)) - halfWidth, getScreenR().top,
+        Math.round(points.get(2)) + halfWidth, getScreenR().bottom);
     rightHandle.draw(canvas);
   }
 

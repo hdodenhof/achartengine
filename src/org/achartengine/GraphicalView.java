@@ -82,6 +82,8 @@ public class GraphicalView extends View {
   /** If the graphical view is drawn. */
   private boolean mDrawn;
 
+  private Context mContext;
+
   /**
    * Creates a new graphical view.
    * 
@@ -90,6 +92,7 @@ public class GraphicalView extends View {
    */
   public GraphicalView(Context context, AbstractChart chart) {
     super(context);
+    mContext = context;
     mChart = chart;
     mHandler = new Handler();
     if (mChart instanceof XYChart) {
@@ -117,7 +120,7 @@ public class GraphicalView extends View {
       mFitZoom = new FitZoom(mChart);
     }
 
-    mTouchHandler = new TouchHandler(this, mChart);
+    mTouchHandler = new TouchHandler(this, mContext, mChart);
   }
 
   /**
