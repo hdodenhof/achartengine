@@ -70,6 +70,10 @@ public class OverlayChart extends XYChart {
       throw new RuntimeException(); // TODO
     }
 
+    if (points.size() < 4) {
+      return;
+    }
+
     paint.setColor(seriesRenderer.getColor());
     paint.setStyle(Style.FILL);
 
