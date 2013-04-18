@@ -35,6 +35,7 @@ public class ConnectedCharts {
   private static final String TAG = ConnectedCharts.class.getSimpleName();
 
   private static final int OVERLAY_COLOR = Color.argb(128, 0, 0, 0); // TODO
+  private static final long HALF_DAY_IN_MILIS = 24 * 60 * 60 * 1000 / 2;
 
   private Context mContext;
 
@@ -142,14 +143,14 @@ public class ConnectedCharts {
 
     // Setup limits for both charts based on base series min/max values
     for (int i = 0; i < mScaleCount; i++) {
-      mOverviewChartRenderer.setXAxisMin(minX - 1, i);
-      mOverviewChartRenderer.setXAxisMax(maxX + 1, i);
+      mOverviewChartRenderer.setXAxisMin(minX - HALF_DAY_IN_MILIS, i);
+      mOverviewChartRenderer.setXAxisMax(maxX + HALF_DAY_IN_MILIS, i);
       mOverviewChartRenderer.setYAxisMin(minY[i] - 1, i);
       mOverviewChartRenderer.setYAxisMax(maxY[i] + 1, i);
     }
 
-    mOverviewChartRenderer
-        .setPanLimits(new double[] { minX - 1, maxX + 1, minY[0] - 1, maxY[0] + 1 });
+    mOverviewChartRenderer.setPanLimits(new double[] { minX - HALF_DAY_IN_MILIS,
+        maxX + HALF_DAY_IN_MILIS, minY[0] - 1, maxY[0] + 1 });
 
     // this is initOverviewChart(), should go somewhere else
     for (int i = 0; i < mScaleCount; i++) {
@@ -159,8 +160,10 @@ public class ConnectedCharts {
       mBaseChartRenderer.setYAxisMax(maxY[i] + 1, i);
     }
 
-    mBaseChartRenderer.setZoomLimits(new double[] { minX - 1, maxX + 1, minY[0] - 1, maxY[0] + 1 });
-    mBaseChartRenderer.setPanLimits(new double[] { minX - 1, maxX + 1, minY[0] - 1, maxY[0] + 1 });
+    mBaseChartRenderer.setZoomLimits(new double[] { minX - HALF_DAY_IN_MILIS,
+        maxX + HALF_DAY_IN_MILIS, minY[0] - 1, maxY[0] + 1 });
+    mBaseChartRenderer.setPanLimits(new double[] { minX - HALF_DAY_IN_MILIS,
+        maxX + HALF_DAY_IN_MILIS, minY[0] - 1, maxY[0] + 1 });
 
     // Disable panning and zooming
     mOverviewChartRenderer.setPanEnabled(false);
