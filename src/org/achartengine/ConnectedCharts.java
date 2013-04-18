@@ -48,6 +48,8 @@ public class ConnectedCharts {
   private XYMultipleSeriesDataset mBaseDataset;
   private XYMultipleSeriesDataset mOverviewDataset;
 
+  private XYSeries mOverviewSeries;
+
   private String mFormat;
   private String[] mTypes;
   private int mOverlayIndex;
@@ -78,17 +80,6 @@ public class ConnectedCharts {
     mOverviewDataset = new XYMultipleSeriesDataset();
     mOverviewChartRenderer = new XYMultipleSeriesRenderer(mScaleCount);
 
-    // Keep track of base series min/max values
-    double minX = Double.MAX_VALUE;
-    double maxX = Double.MIN_VALUE;
-
-    double minY[] = new double[mScaleCount];
-    double maxY[] = new double[mScaleCount];
-    for (int i = 0; i < mScaleCount; i++) {
-      minY[i] = Double.MAX_VALUE;
-      maxY[i] = Double.MIN_VALUE;
-    }
-
     // Copy base series to overview
     for (int i = 0; i < mBaseDataset.getSeriesCount(); i++) {
       XYSeries baseSeries = mBaseDataset.getSeriesAt(i);
@@ -110,17 +101,11 @@ public class ConnectedCharts {
         series.add(baseSeries.getX(j), baseSeries.getY(j));
       }
 
-      minX = Math.min(minX, baseSeries.getMinX());
-      maxX = Math.max(maxX, baseSeries.getMaxX());
-      minY[baseSeries.getScaleNumber()] = Math.min(minY[baseSeries.getScaleNumber()],
-          baseSeries.getMinY());
-      maxY[baseSeries.getScaleNumber()] = Math.max(maxY[baseSeries.getScaleNumber()],
-          baseSeries.getMaxY());
     }
 
     // Add overlay series to overview
-    XYSeries overlaySeries = new XYSeries("Overlay");
-    mOverviewDataset.addSeries(overlaySeries);
+    mOverviewSeries = new XYSeries("Overlay");
+    mOverviewDataset.addSeries(mOverviewSeries);
 
     XYSeriesRenderer overlayRenderer = new XYSeriesRenderer();
     mOverviewChartRenderer.addSeriesRenderer(overlayRenderer);
@@ -134,36 +119,7 @@ public class ConnectedCharts {
     overlayTypes[mTypes.length] = "Overlay";
     mOverlayIndex = mTypes.length;
 
-    // Setup initial overlay
-    double center = (maxX - minX) / 2 + minX;
-    double margin = (maxX - minX) / 4; // TODO
-
-    overlaySeries.add(center - margin, 0);
-    overlaySeries.add(center + margin, 0);
-
-    // Setup limits for both charts based on base series min/max values
-    for (int i = 0; i < mScaleCount; i++) {
-      mOverviewChartRenderer.setXAxisMin(minX - HALF_DAY_IN_MILIS, i);
-      mOverviewChartRenderer.setXAxisMax(maxX + HALF_DAY_IN_MILIS, i);
-      mOverviewChartRenderer.setYAxisMin(minY[i] - 1, i);
-      mOverviewChartRenderer.setYAxisMax(maxY[i] + 1, i);
-    }
-
-    mOverviewChartRenderer.setPanLimits(new double[] { minX - HALF_DAY_IN_MILIS,
-        maxX + HALF_DAY_IN_MILIS, minY[0] - 1, maxY[0] + 1 });
-
-    // this is initOverviewChart(), should go somewhere else
-    for (int i = 0; i < mScaleCount; i++) {
-      mBaseChartRenderer.setXAxisMin(center - margin, i);
-      mBaseChartRenderer.setXAxisMax(center + margin, i);
-      mBaseChartRenderer.setYAxisMin(minY[i] - 1, i);
-      mBaseChartRenderer.setYAxisMax(maxY[i] + 1, i);
-    }
-
-    mBaseChartRenderer.setZoomLimits(new double[] { minX - HALF_DAY_IN_MILIS,
-        maxX + HALF_DAY_IN_MILIS, minY[0] - 1, maxY[0] + 1 });
-    mBaseChartRenderer.setPanLimits(new double[] { minX - HALF_DAY_IN_MILIS,
-        maxX + HALF_DAY_IN_MILIS, minY[0] - 1, maxY[0] + 1 });
+    recalculateBounds(true);
 
     // Disable panning and zooming
     mOverviewChartRenderer.setPanEnabled(false);
@@ -177,6 +133,63 @@ public class ConnectedCharts {
     // TODO better way to inject context?
     ((OverlayChart) ((CombinedXYChart) mOverviewChartView.getChart()).getCharts()[mOverlayIndex])
         .setContext(mContext);
+  }
+
+  private void recalculateBounds() {
+    recalculateBounds(false);
+  }
+
+  private void recalculateBounds(boolean initial) {
+    double minX = Double.MAX_VALUE;
+    double maxX = Double.MIN_VALUE;
+
+    double minY[] = new double[mScaleCount];
+    double maxY[] = new double[mScaleCount];
+    for (int i = 0; i < mScaleCount; i++) {
+      minY[i] = Double.MAX_VALUE;
+      maxY[i] = Double.MIN_VALUE;
+    }
+
+    for (int i = 0; i < mBaseDataset.getSeriesCount(); i++) {
+      XYSeries series = mBaseDataset.getSeriesAt(i);
+
+      minX = Math.min(minX, series.getMinX());
+      maxX = Math.max(maxX, series.getMaxX());
+      minY[series.getScaleNumber()] = Math.min(minY[series.getScaleNumber()], series.getMinY());
+      maxY[series.getScaleNumber()] = Math.max(maxY[series.getScaleNumber()], series.getMaxY());
+    }
+
+    // Setup initial overlay
+    double center = (maxX - minX) / 2 + minX;
+    double margin = (maxX - minX) / 4; // TODO
+
+    // Setup limits for both charts based on base series min/max values
+    for (int i = 0; i < mScaleCount; i++) {
+      mOverviewChartRenderer.setXAxisMin(minX - HALF_DAY_IN_MILIS, i);
+      mOverviewChartRenderer.setXAxisMax(maxX + HALF_DAY_IN_MILIS, i);
+      mOverviewChartRenderer.setYAxisMin(minY[i] - 1, i);
+      mOverviewChartRenderer.setYAxisMax(maxY[i] + 1, i);
+    }
+
+    mOverviewChartRenderer.setPanLimits(new double[] { minX - HALF_DAY_IN_MILIS,
+        maxX + HALF_DAY_IN_MILIS, minY[0] - 1, maxY[0] + 1 });
+
+    for (int i = 0; i < mScaleCount; i++) {
+      mBaseChartRenderer.setXAxisMin(center - margin, i);
+      mBaseChartRenderer.setXAxisMax(center + margin, i);
+      mBaseChartRenderer.setYAxisMin(minY[i] - 1, i);
+      mBaseChartRenderer.setYAxisMax(maxY[i] + 1, i);
+    }
+
+    mBaseChartRenderer.setZoomLimits(new double[] { minX - HALF_DAY_IN_MILIS,
+        maxX + HALF_DAY_IN_MILIS, minY[0] - 1, maxY[0] + 1 });
+    mBaseChartRenderer.setPanLimits(new double[] { minX - HALF_DAY_IN_MILIS,
+        maxX + HALF_DAY_IN_MILIS, minY[0] - 1, maxY[0] + 1 });
+
+    if (initial) {
+      mOverviewSeries.add(center - margin, 0);
+      mOverviewSeries.add(center + margin, 0);
+    }
   }
 
   private void initListeners() {
