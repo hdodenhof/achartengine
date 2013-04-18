@@ -50,6 +50,7 @@ public class ConnectedCharts {
   private String mFormat;
   private String[] mTypes;
   private int mOverlayIndex;
+  private int mScaleCount;
 
   public ConnectedCharts(Context context, XYMultipleSeriesDataset dataset,
       XYMultipleSeriesRenderer renderer, String[] types, String format) {
@@ -62,6 +63,8 @@ public class ConnectedCharts {
     mFormat = format;
     mTypes = types;
 
+    mScaleCount = mBaseChartRenderer.getScalesCount();
+
     mBaseChartRenderer.setPanEnabled(true, false);
     mBaseChartRenderer.setZoomEnabled(true, false);
     mBaseChartRenderer.setZoomButtonsVisible(false);
@@ -72,13 +75,18 @@ public class ConnectedCharts {
 
   private void initOverviewChart() {
     mOverviewDataset = new XYMultipleSeriesDataset();
-    mOverviewChartRenderer = new XYMultipleSeriesRenderer();
+    mOverviewChartRenderer = new XYMultipleSeriesRenderer(mScaleCount);
 
     // Keep track of base series min/max values
     double minX = Double.MAX_VALUE;
     double maxX = Double.MIN_VALUE;
-    double minY = Double.MAX_VALUE;
-    double maxY = Double.MIN_VALUE;
+
+    double minY[] = new double[mScaleCount];
+    double maxY[] = new double[mScaleCount];
+    for (int i = 0; i < mScaleCount; i++) {
+      minY[i] = Double.MAX_VALUE;
+      maxY[i] = Double.MIN_VALUE;
+    }
 
     // Copy base series to overview
     for (int i = 0; i < mBaseDataset.getSeriesCount(); i++) {
@@ -86,7 +94,7 @@ public class ConnectedCharts {
       XYSeriesRenderer baseSeriesRenderer = (XYSeriesRenderer) mBaseChartRenderer
           .getSeriesRendererAt(i);
 
-      XYSeries series = new XYSeries(baseSeries.getTitle());
+      XYSeries series = new XYSeries(baseSeries.getTitle(), baseSeries.getScaleNumber());
       mOverviewDataset.addSeries(series);
 
       XYSeriesRenderer overviewSeriesRenderer = new XYSeriesRenderer();
@@ -103,8 +111,10 @@ public class ConnectedCharts {
 
       minX = Math.min(minX, baseSeries.getMinX());
       maxX = Math.max(maxX, baseSeries.getMaxX());
-      minY = Math.min(minY, baseSeries.getMinY());
-      maxY = Math.max(maxY, baseSeries.getMaxY());
+      minY[baseSeries.getScaleNumber()] = Math.min(minY[baseSeries.getScaleNumber()],
+          baseSeries.getMinY());
+      maxY[baseSeries.getScaleNumber()] = Math.max(maxY[baseSeries.getScaleNumber()],
+          baseSeries.getMaxY());
     }
 
     // Add overlay series to overview
@@ -131,19 +141,26 @@ public class ConnectedCharts {
     overlaySeries.add(center + margin, 0);
 
     // Setup limits for both charts based on base series min/max values
-    mOverviewChartRenderer.setXAxisMin(minX - 1);
-    mOverviewChartRenderer.setXAxisMax(maxX + 1);
-    mOverviewChartRenderer.setYAxisMin(minY - 1);
-    mOverviewChartRenderer.setYAxisMax(maxY + 1);
-    mOverviewChartRenderer.setPanLimits(new double[] { minX - 1, maxX + 1, minY - 1, maxY + 1 });
+    for (int i = 0; i < mScaleCount; i++) {
+      mOverviewChartRenderer.setXAxisMin(minX - 1, i);
+      mOverviewChartRenderer.setXAxisMax(maxX + 1, i);
+      mOverviewChartRenderer.setYAxisMin(minY[i] - 1, i);
+      mOverviewChartRenderer.setYAxisMax(maxY[i] + 1, i);
+    }
+
+    mOverviewChartRenderer
+        .setPanLimits(new double[] { minX - 1, maxX + 1, minY[0] - 1, maxY[0] + 1 });
 
     // this is initOverviewChart(), should go somewhere else
-    mBaseChartRenderer.setXAxisMin(center - margin);
-    mBaseChartRenderer.setXAxisMax(center + margin);
-    mBaseChartRenderer.setYAxisMin(minY - 1);
-    mBaseChartRenderer.setYAxisMax(maxY + 1);
-    mBaseChartRenderer.setZoomLimits(new double[] { minX - 1, maxX + 1, minY - 1, maxY + 1 });
-    mBaseChartRenderer.setPanLimits(new double[] { minX - 1, maxX + 1, minY - 1, maxY + 1 });
+    for (int i = 0; i < mScaleCount; i++) {
+      mBaseChartRenderer.setXAxisMin(center - margin, i);
+      mBaseChartRenderer.setXAxisMax(center + margin, i);
+      mBaseChartRenderer.setYAxisMin(minY[i] - 1, i);
+      mBaseChartRenderer.setYAxisMax(maxY[i] + 1, i);
+    }
+
+    mBaseChartRenderer.setZoomLimits(new double[] { minX - 1, maxX + 1, minY[0] - 1, maxY[0] + 1 });
+    mBaseChartRenderer.setPanLimits(new double[] { minX - 1, maxX + 1, minY[0] - 1, maxY[0] + 1 });
 
     // Disable panning and zooming
     mOverviewChartRenderer.setPanEnabled(false);
@@ -190,8 +207,11 @@ public class ConnectedCharts {
       public void moveApplied() {
         mOverviewChartView.repaint();
 
-        mBaseChartRenderer.setXAxisMin(mOverviewDataset.getSeriesAt(mOverlayIndex).getX(0));
-        mBaseChartRenderer.setXAxisMax(mOverviewDataset.getSeriesAt(mOverlayIndex).getX(1));
+        for (int i = 0; i < mScaleCount; i++) {
+          mBaseChartRenderer.setXAxisMin(mOverviewDataset.getSeriesAt(mOverlayIndex).getX(0), i);
+          mBaseChartRenderer.setXAxisMax(mOverviewDataset.getSeriesAt(mOverlayIndex).getX(1), i);
+        }
+
         mBaseChartView.repaint();
       }
     });
