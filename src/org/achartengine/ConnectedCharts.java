@@ -34,7 +34,7 @@ public class ConnectedCharts {
 
   private static final String TAG = ConnectedCharts.class.getSimpleName();
 
-  private static final int OVERLAY_COLOR = Color.argb(128, 0, 0, 0); // TODO
+  private static final int OVERLAY_COLOR = Color.argb(128, 0, 0, 0);
   private static final long HALF_DAY_IN_MILIS = 24 * 60 * 60 * 1000 / 2;
 
   private Context mContext;
@@ -53,6 +53,7 @@ public class ConnectedCharts {
   private String mFormat;
   private String[] mTypes;
   private int mOverlayIndex;
+  private int mOverlayColor = -1;
   private int mScaleCount;
 
   public ConnectedCharts(Context context, XYMultipleSeriesDataset dataset,
@@ -110,7 +111,7 @@ public class ConnectedCharts {
     XYSeriesRenderer overlayRenderer = new XYSeriesRenderer();
     mOverviewChartRenderer.addSeriesRenderer(overlayRenderer);
 
-    overlayRenderer.setColor(OVERLAY_COLOR);
+    overlayRenderer.setColor(mOverlayColor != -1 ? mOverlayColor : OVERLAY_COLOR);
 
     String[] overlayTypes = new String[mTypes.length + 1];
     for (int i = 0; i < mTypes.length; i++) {
@@ -249,6 +250,14 @@ public class ConnectedCharts {
   public void repaint() {
     mBaseChartView.repaint();
     mOverviewChartView.repaint();
+  }
+
+  public int getOverlayColor() {
+    return mOverlayColor;
+  }
+
+  public void setOverlayColor(int color) {
+    this.mOverlayColor = color;
   }
 
   // TODO this enables messing around with charts and renderers and possibly
