@@ -174,18 +174,13 @@ public class CombinedTimeChart extends CombinedXYChart {
    * @return the date format
    */
   private DateFormat getDateFormat(double start, double end) {
-    if (mDateFormat != null) {
-      return new SimpleDateFormat(mDateFormat);
-    }
-
-    DateFormat format = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
     double diff = end - start;
-    if (diff > DAY && diff < 5 * DAY) {
-      format = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.SHORT);
-    } else if (diff < DAY) {
-      format = SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM);
+
+    if (diff > DAY) {
+      return new SimpleDateFormat("d MMM");
+    } else {
+      return new SimpleDateFormat("d MMM, HH:mm");
     }
-    return format;
   }
 
   /**

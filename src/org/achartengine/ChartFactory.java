@@ -222,8 +222,7 @@ public class ChartFactory {
    *           series renderers or number of chart types
    */
   public static final GraphicalView getCombinedTimeChartView(Context context,
-      XYMultipleSeriesDataset dataset, XYMultipleSeriesRenderer renderer, String[] types,
-      String format) {
+      XYMultipleSeriesDataset dataset, XYMultipleSeriesRenderer renderer, String[] types) {
     if (dataset == null || renderer == null || types == null
         || dataset.getSeriesCount() != types.length) {
       throw new IllegalArgumentException(
@@ -231,7 +230,6 @@ public class ChartFactory {
     }
     checkParameters(dataset, renderer);
     CombinedTimeChart chart = new CombinedTimeChart(dataset, renderer, types);
-    chart.setDateFormat(format);
     return new GraphicalView(context, chart);
   }
 
