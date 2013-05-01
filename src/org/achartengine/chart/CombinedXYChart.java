@@ -36,7 +36,7 @@ public class CombinedXYChart extends XYChart {
   /** The supported charts for being combined. */
   private Class<?>[] xyChartTypes = new Class<?>[] { TimeChart.class, LineChart.class,
       CubicLineChart.class, BarChart.class, BubbleChart.class, ScatterChart.class,
-      RangeBarChart.class, RangeStackedBarChart.class, OverlayChart.class };
+      RangeBarChart.class, RangeStackedBarChart.class, OverlayChart.class, RangeOverlayChart.class };
 
   /**
    * Builds a new combined XY chart instance.
