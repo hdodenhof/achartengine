@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2009 - 2012 SC 4ViewSoft SRL
+ * Copyright (C) 2013 Henning Dodenhof
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +35,8 @@ public class XYSeriesRenderer extends SimpleSeriesRenderer {
   private List<FillOutsideLine> mFillBelowLine = new ArrayList<FillOutsideLine>();
   /** The point style. */
   private PointStyle mPointStyle = PointStyle.POINT;
+  /** The point size */
+  private float mPointSize = 3;
   /** The point stroke width */
   private float mPointStrokeWidth = 1;
   /** The chart line width. */
@@ -227,6 +230,24 @@ public class XYSeriesRenderer extends SimpleSeriesRenderer {
    */
   public void setPointStrokeWidth(float strokeWidth) {
     mPointStrokeWidth = strokeWidth;
+  }
+
+  /**
+   * Returns the point size in pixels.
+   * 
+   * @return the point size in pixels
+   */
+  public float getPointSize() {
+    return mPointSize;
+  }
+
+  /**
+   * Sets the point size in pixels.
+   * 
+   * @param strokeWidth the point size in pixels
+   */
+  public void setPointSize(float pointSize) {
+    mPointSize = pointSize;
   }
 
   /**

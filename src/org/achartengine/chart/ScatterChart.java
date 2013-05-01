@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2009 - 2012 SC 4ViewSoft SRL
+ * Copyright (C) 2013 Henning Dodenhof
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +24,7 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
@@ -76,6 +78,7 @@ public class ScatterChart extends XYChart {
   public void drawSeries(Canvas canvas, Paint paint, List<Float> points,
       SimpleSeriesRenderer seriesRenderer, float yAxisValue, int seriesIndex, int startIndex) {
     XYSeriesRenderer renderer = (XYSeriesRenderer) seriesRenderer;
+    size = renderer.getPointSize();
     paint.setColor(renderer.getColor());
     final float stroke = paint.getStrokeWidth();
     if (renderer.isFillPoints()) {
@@ -94,6 +97,15 @@ public class ScatterChart extends XYChart {
       break;
     case CIRCLE:
       for (int i = 0; i < length; i += 2) {
+        drawCircle(canvas, paint, points.get(i), points.get(i + 1));
+      }
+      break;
+    case CIRCLE_FILLED:
+      for (int i = 0; i < length; i += 2) {
+        Paint fill = new Paint();
+        fill.setColor(Color.WHITE); // TODO
+        fill.setStyle(Style.FILL);
+        drawCircle(canvas, fill, points.get(i), points.get(i + 1));
         drawCircle(canvas, paint, points.get(i), points.get(i + 1));
       }
       break;

@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2009 - 2012 SC 4ViewSoft SRL
+ * Copyright (C) 2013 Henning Dodenhof
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +21,7 @@ package org.achartengine.chart;
  */
 public enum PointStyle {
   X("x"), CIRCLE("circle"), TRIANGLE("triangle"), SQUARE("square"), DIAMOND("diamond"), POINT(
-      "point");
+      "point"), CIRCLE_FILLED("circle_filled");
 
   /** The point shape name. */
   private String mName;
