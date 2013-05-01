@@ -176,7 +176,7 @@ public class CombinedTimeChart extends CombinedXYChart {
   private DateFormat getDateFormat(double start, double end) {
     double diff = end - start;
 
-    if (diff > DAY) {
+    if (diff > DAY * 2) {
       return new SimpleDateFormat("d MMM");
     } else {
       return new SimpleDateFormat("d MMM, HH:mm");
