@@ -30,6 +30,11 @@ import android.graphics.Paint.Style;
 public class RangeOverlayChart extends XYChart {
   /** The constant to identify this chart type. */
   public static final String TYPE = "RangeOverlayChart";
+  
+  private float mMin = Float.MAX_VALUE;
+  private float mMax = Float.MIN_VALUE;
+  private float mTarget = Float.NaN;
+  private boolean mInitialized = false;
 
   RangeOverlayChart() {
   }
@@ -51,21 +56,20 @@ public class RangeOverlayChart extends XYChart {
     if (points.size() < 4) {
       return;
     }
-
-    float min = Float.MAX_VALUE;
-    float max = Float.MIN_VALUE;
-    float target = Float.NaN;
-
-    for (int i = 1; i < points.size(); i += 2) {
-      min = Math.min(min, points.get(i));
-      max = Math.max(max, points.get(i));
-    }
-
-    for (int i = 1; i < points.size(); i += 2) {
-      if (points.get(i) != min && points.get(i) != max) {
-        target = points.get(i);
-        break;
+    
+    if (!mInitialized){
+      for (int i = 1; i < points.size(); i += 2) {
+        mMin = Math.min(mMin, points.get(i));
+        mMax = Math.max(mMax, points.get(i));
       }
+        
+      for (int i = 1; i < points.size(); i += 2) {
+        if (points.get(i) != mMin && points.get(i) != mMax) {
+          mTarget = points.get(i);
+          break;
+        }
+      }
+      mInitialized = true;
     }
 
     Paint overlayPaint = new Paint();
@@ -76,10 +80,10 @@ public class RangeOverlayChart extends XYChart {
     linePaint.setColor(Color.BLACK);
     linePaint.setStrokeWidth(2);
 
-    canvas.drawRect(0, (float) min, canvas.getWidth(), (float) max, overlayPaint);
+    canvas.drawRect(0, (float) mMin, canvas.getWidth(), (float) mMax, overlayPaint);
 
-    if (target != Float.NaN) {
-      canvas.drawLine(0, (float) target, canvas.getWidth(), (float) target, linePaint);
+    if (mTarget != Float.NaN) {
+      canvas.drawLine(0, (float) mTarget, canvas.getWidth(), (float) mTarget, linePaint);
     }
   }
 
