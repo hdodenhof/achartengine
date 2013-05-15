@@ -80,6 +80,29 @@ public class CombinedXYChart extends XYChart {
         }
         newRenderer.addSeriesRenderer(renderer.getSeriesRendererAt(i));
         mCharts[i].setDatasetRenderer(newDataset, newRenderer);
+        
+        // FIXME
+        if (mCharts[i].getChartType().equals(RangeOverlayChart.TYPE)){
+          RangeOverlayChart chart = (RangeOverlayChart) mCharts[i];
+          XYSeries series = dataset.getSeriesAt(i);
+
+          float min = Float.MAX_VALUE;
+          float max = Float.MIN_VALUE;
+          float target = Float.NaN;
+
+          for (int j = 0; j < series.getItemCount(); j++) {
+            min = Math.min(min, (float) series.getY(j));
+            max = Math.max(max, (float) series.getY(j));
+          }
+
+          for (int j = 0; j < series.getItemCount(); j++) {
+            if ((float) series.getY(j) != min && (float) series.getY(j) != max) {
+              target = (float) series.getY(j);
+              break;
+            }
+          }
+          chart.setValues(min, max, target);
+        }
       }
     }
   }

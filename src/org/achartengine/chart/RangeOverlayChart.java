@@ -53,23 +53,8 @@ public class RangeOverlayChart extends XYChart {
   @Override
   public void drawSeries(Canvas canvas, Paint paint, List<Float> points,
       SimpleSeriesRenderer seriesRenderer, float yAxisValue, int seriesIndex, int startIndex) {
-    if (points.size() < 4) {
+    if (points.size() < 4 || !mInitialized) {
       return;
-    }
-    
-    if (!mInitialized){
-      for (int i = 1; i < points.size(); i += 2) {
-        mMin = Math.min(mMin, points.get(i));
-        mMax = Math.max(mMax, points.get(i));
-      }
-        
-      for (int i = 1; i < points.size(); i += 2) {
-        if (points.get(i) != mMin && points.get(i) != mMax) {
-          mTarget = points.get(i);
-          break;
-        }
-      }
-      mInitialized = true;
     }
 
     Paint overlayPaint = new Paint();
@@ -80,11 +65,24 @@ public class RangeOverlayChart extends XYChart {
     linePaint.setColor(Color.BLACK);
     linePaint.setStrokeWidth(2);
 
-    canvas.drawRect(0, (float) mMin, canvas.getWidth(), (float) mMax, overlayPaint);
+    canvas.drawRect(0, (float) toScreenPoint(new double[]{0, mMax})[1], canvas.getWidth(),
+        (float) toScreenPoint(new double[]{0, mMin})[1], overlayPaint);
 
     if (mTarget != Float.NaN) {
-      canvas.drawLine(0, (float) mTarget, canvas.getWidth(), (float) mTarget, linePaint);
+      canvas.drawLine(0, (float) toScreenPoint(new double[]{0, mTarget})[1], canvas.getWidth(),
+          (float) toScreenPoint(new double[]{0, mTarget})[1], linePaint);
     }
+  }
+  
+  public void setValues(float min, float max){
+      setValues(min, max, Float.NaN);
+  }
+  
+  public void setValues(float min, float max, float target){
+      mMin = min;
+      mMax = max;
+      mTarget = target;
+      mInitialized = true;
   }
 
   @Override
