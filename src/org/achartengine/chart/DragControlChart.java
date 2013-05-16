@@ -30,7 +30,7 @@ import android.graphics.drawable.NinePatchDrawable;
 import android.util.DisplayMetrics;
 
 /**
- * The overlay chart rendering class.
+ * The drag control chart rendering class.
  */
 public class DragControlChart extends XYChart {
   /** The constant to identify this chart type. */
@@ -67,9 +67,11 @@ public class DragControlChart extends XYChart {
       SimpleSeriesRenderer seriesRenderer, float yAxisValue, int seriesIndex, int startIndex) {
 
     if (mContext == null) {
-      throw new RuntimeException(); // TODO
+      throw new RuntimeException("Context has to be injected before drawing this!");
     }
 
+    // At least two coordinates are required
+    // points comes like this: 0:x1, 1:y1, 2:x2, 3:y2, ... - that's why we check for four items
     if (points.size() < 4) {
       return;
     }
@@ -77,12 +79,12 @@ public class DragControlChart extends XYChart {
     paint.setColor(seriesRenderer.getColor());
     paint.setStyle(Style.FILL);
 
+    // Left and right overlay
     canvas.drawRect(0, 0, points.get(0), canvas.getHeight(), paint);
     canvas.drawRect(points.get(2), 0, canvas.getWidth(), canvas.getHeight(), paint);
 
     NinePatchDrawable leftHandle = (NinePatchDrawable) mContext.getResources().getDrawable(
         R.drawable.handle);
-
     NinePatchDrawable rightHandle = (NinePatchDrawable) mContext.getResources().getDrawable(
         R.drawable.handle);
 
@@ -145,6 +147,11 @@ public class DragControlChart extends XYChart {
       int seriesIndex, Paint paint) {
   }
 
+  /**
+   * Inject context
+   * 
+   * @param context
+   */
   public void setContext(Context context) {
     this.mContext = context;
   }

@@ -25,7 +25,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 
 /**
- * The line chart rendering class.
+ * The target range chart rendering class.
  */
 public class TargetRangeChart extends XYChart {
   /** The constant to identify this chart type. */
@@ -53,7 +53,9 @@ public class TargetRangeChart extends XYChart {
   @Override
   public void drawSeries(Canvas canvas, Paint paint, List<Float> points,
       SimpleSeriesRenderer seriesRenderer, float yAxisValue, int seriesIndex, int startIndex) {
-    if (points.size() < 4 || !mInitialized) {
+      
+    // Don't draw anything, if values haven't been initialized  
+    if (!mInitialized) {
       return;
     }
 
@@ -61,6 +63,7 @@ public class TargetRangeChart extends XYChart {
     overlayPaint.setColor(seriesRenderer.getColor());
     overlayPaint.setStyle(Style.FILL);
 
+    // TODO color and stroke width should be configurable
     Paint linePaint = new Paint();
     linePaint.setColor(Color.BLACK);
     linePaint.setStrokeWidth(2);
@@ -74,10 +77,23 @@ public class TargetRangeChart extends XYChart {
     }
   }
   
+  /**
+   * Inject target range values
+   * 
+   * @param min
+   * @param max
+   */
   public void setValues(float min, float max){
       setValues(min, max, Float.NaN);
   }
   
+  /**
+   * Inject target range values
+   * 
+   * @param min
+   * @param max
+   * @param target
+   */
   public void setValues(float min, float max, float target){
       mMin = min;
       mMax = max;
