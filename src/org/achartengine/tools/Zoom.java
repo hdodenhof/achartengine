@@ -28,9 +28,7 @@ import org.achartengine.renderer.DefaultRenderer;
  * The zoom tool.
  */
 public class Zoom extends AbstractTool {
-    
-  private static final long DAY_IN_MILIS =  86400000;  
-    
+ 
   /** A flag to be used to know if this is a zoom in or out. */
   private boolean mZoomIn;
   /** The zoom rate. */
@@ -135,8 +133,8 @@ public class Zoom extends AbstractTool {
         newWidth = Math.max(newWidth, minX);
         newHeight = Math.max(newHeight, minY);
         
-        if (newWidth < DAY_IN_MILIS){
-            newWidth  = DAY_IN_MILIS;
+        if (newWidth < mRenderer.getZoomInMinDistX()){
+            newWidth  = mRenderer.getZoomInMinDistX();
         }
         
         if (mRenderer.isZoomXEnabled() && (zoom_axis == ZOOM_AXIS_X || zoom_axis == ZOOM_AXIS_XY)) {

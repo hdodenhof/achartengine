@@ -29,9 +29,7 @@ import android.util.DisplayMetrics;
  * The move tool.
  */
 public class Move extends AbstractTool {
-    
-  private static final long DAY_IN_MILIS =  86400000;  
-    
+
   private final int mDragBuffer;
 
   private List<MoveListener> mMoveListeners = new ArrayList<MoveListener>();
@@ -93,14 +91,14 @@ public class Move extends AbstractTool {
     if ((mDraggingLeft || Math.abs(oldX - oldX1) < mDragBuffer) && !mMoving) {
       mDraggingLeft = true;
 
-      if (newRealX < oldRealX2 - DAY_IN_MILIS && newX >= limitX1) {
+      if (newRealX < oldRealX2 - mRenderer.getZoomInMinDistX() && newX >= limitX1) {
           newRealX1 = newRealX;
           newRealX2 = oldRealX2;
         }
     } else if ((mDraggingRight || Math.abs(oldX - oldX2) < mDragBuffer) && !mMoving) {
       mDraggingRight = true;
 
-      if (newRealX > oldRealX1 + DAY_IN_MILIS && newX <= limitX2) {
+      if (newRealX > oldRealX1 + mRenderer.getZoomInMinDistX() && newX <= limitX2) {
         newRealX1 = oldRealX1;
         newRealX2 = newRealX;
       }
