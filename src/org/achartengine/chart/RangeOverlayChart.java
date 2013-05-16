@@ -29,7 +29,7 @@ import android.graphics.Paint.Style;
  */
 public class RangeOverlayChart extends XYChart {
   /** The constant to identify this chart type. */
-  public static final String TYPE = "RangeOverlayChart";
+  public static final String TYPE = "RangeOverlay";
   
   private float mMin = Float.MAX_VALUE;
   private float mMax = Float.MIN_VALUE;
