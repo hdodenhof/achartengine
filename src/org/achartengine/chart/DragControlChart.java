@@ -32,13 +32,13 @@ import android.util.DisplayMetrics;
 /**
  * The overlay chart rendering class.
  */
-public class OverlayChart extends XYChart {
+public class DragControlChart extends XYChart {
   /** The constant to identify this chart type. */
-  public static final String TYPE = "Overlay";
+  public static final String TYPE = "DragControl";
 
   private Context mContext;
 
-  OverlayChart() {
+  DragControlChart() {
   }
 
   /**
@@ -47,7 +47,7 @@ public class OverlayChart extends XYChart {
    * @param dataset the multiple series dataset
    * @param renderer the multiple series renderer
    */
-  public OverlayChart(XYMultipleSeriesDataset dataset, XYMultipleSeriesRenderer renderer) {
+  public DragControlChart(XYMultipleSeriesDataset dataset, XYMultipleSeriesRenderer renderer) {
     super(dataset, renderer);
   }
 

@@ -36,7 +36,7 @@ public class CombinedXYChart extends XYChart {
   /** The supported charts for being combined. */
   private Class<?>[] xyChartTypes = new Class<?>[] { TimeChart.class, LineChart.class,
       CubicLineChart.class, BarChart.class, BubbleChart.class, ScatterChart.class,
-      RangeBarChart.class, RangeStackedBarChart.class, OverlayChart.class, RangeOverlayChart.class };
+      RangeBarChart.class, RangeStackedBarChart.class, DragControlChart.class, TargetRangeChart.class };
 
   /**
    * Builds a new combined XY chart instance.
@@ -82,8 +82,8 @@ public class CombinedXYChart extends XYChart {
         mCharts[i].setDatasetRenderer(newDataset, newRenderer);
         
         // FIXME
-        if (mCharts[i].getChartType().equals(RangeOverlayChart.TYPE)){
-          RangeOverlayChart chart = (RangeOverlayChart) mCharts[i];
+        if (mCharts[i].getChartType().equals(TargetRangeChart.TYPE)){
+          TargetRangeChart chart = (TargetRangeChart) mCharts[i];
           XYSeries series = dataset.getSeriesAt(i);
 
           float min = Float.MAX_VALUE;

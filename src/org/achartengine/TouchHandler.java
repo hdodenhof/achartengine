@@ -18,7 +18,7 @@ package org.achartengine;
 
 import org.achartengine.chart.AbstractChart;
 import org.achartengine.chart.CombinedXYChart;
-import org.achartengine.chart.OverlayChart;
+import org.achartengine.chart.DragControlChart;
 import org.achartengine.chart.RoundChart;
 import org.achartengine.chart.XYChart;
 import org.achartengine.renderer.DefaultRenderer;
@@ -84,7 +84,7 @@ public class TouchHandler implements ITouchHandler {
       CombinedXYChart combinedXYChart = (CombinedXYChart) chart;
 
       for (int i = 0; i < combinedXYChart.getCharts().length; i++) {
-        if (combinedXYChart.getCharts()[i] instanceof OverlayChart) {
+        if (combinedXYChart.getCharts()[i] instanceof DragControlChart) {
           mMove = new Move(context, chart, i);
           break;
         }

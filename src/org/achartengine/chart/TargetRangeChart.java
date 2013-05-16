@@ -27,16 +27,16 @@ import android.graphics.Paint.Style;
 /**
  * The line chart rendering class.
  */
-public class RangeOverlayChart extends XYChart {
+public class TargetRangeChart extends XYChart {
   /** The constant to identify this chart type. */
-  public static final String TYPE = "RangeOverlay";
+  public static final String TYPE = "TargetRange";
   
   private float mMin = Float.MAX_VALUE;
   private float mMax = Float.MIN_VALUE;
   private float mTarget = Float.NaN;
   private boolean mInitialized = false;
 
-  RangeOverlayChart() {
+  TargetRangeChart() {
   }
 
   /**
