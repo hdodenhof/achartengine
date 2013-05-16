@@ -1,6 +1,5 @@
 /**
  * Copyright (C) 2009 - 2012 SC 4ViewSoft SRL
- * Copyright (C) 2013 Henning Dodenhof
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,10 +131,6 @@ public class Zoom extends AbstractTool {
         }
         newWidth = Math.max(newWidth, minX);
         newHeight = Math.max(newHeight, minY);
-        
-        if (newWidth < mRenderer.getZoomInMinDistX()){
-            newWidth  = mRenderer.getZoomInMinDistX();
-        }
         
         if (mRenderer.isZoomXEnabled() && (zoom_axis == ZOOM_AXIS_X || zoom_axis == ZOOM_AXIS_XY)) {
           newXMin = centerX - newWidth / 2;

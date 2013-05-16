@@ -111,9 +111,6 @@ public class XYMultipleSeriesRenderer extends DefaultRenderer {
   private double mZoomInLimitX = 0;
   /** The zoom in limit permitted in the axis Y */
   private double mZoomInLimitY = 0;
-
-  /** The zoom in minimum distance */
-  private double mZoomInMinDistX = 0;
   
   /**
    * An enum for the XY chart orientation of the X axis.
@@ -1288,14 +1285,6 @@ public class XYMultipleSeriesRenderer extends DefaultRenderer {
    */
   public void setZoomInLimitY(double zoomInLimitY) {
     this.mZoomInLimitY = zoomInLimitY;
-  }
-
-  public double getZoomInMinDistX() {
-    return mZoomInMinDistX;
-  }
-
-  public void setZoomInMinDistX(double zoomInMinDist) {
-    this.mZoomInMinDistX = zoomInMinDist;
   }
 
   public int getScalesCount() {
