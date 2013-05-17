@@ -1,6 +1,5 @@
 /**
  * Copyright (C) 2009 - 2012 SC 4ViewSoft SRL
- * Copyright (C) 2013 Henning Dodenhof
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,7 +110,7 @@ public class XYMultipleSeriesRenderer extends DefaultRenderer {
   private double mZoomInLimitX = 0;
   /** The zoom in limit permitted in the axis Y */
   private double mZoomInLimitY = 0;
-  
+
   /**
    * An enum for the XY chart orientation of the X axis.
    */
