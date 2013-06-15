@@ -1,1 +1,5 @@
 AChartEngine
+
+Based on AChartEngine rev. 517 from https://code.google.com/p/achartengine/.
+
+This fork contains some changes needed to create interactive connected time-charts.
